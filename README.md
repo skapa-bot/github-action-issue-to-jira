@@ -29,5 +29,4 @@ jobs:
           jiraUsername: ${{ secrets.JIRA_USERNAME }}
           jiraPassword: ${{ secrets.JIRA_PASSWORD }} # See https://id.atlassian.com/manage/api-tokens
           project: PROJECTKEY
-          assignee: default_assignee
 ```

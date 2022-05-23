@@ -1,19 +1,26 @@
-name: Issue to Jira
+name: Sync Github Issues to Jira
 description: Create Jira tickets for GitHub Issues automatically
-runs:
-  using: docker
-  image: Dockerfile
+# runs:
+#   using: docker
+#   image: Dockerfile
 branding:
   icon: mail
   color: orange
 inputs:
   jiraHost:
     description: "The URL of your Jira instance e.g. https://myapp.atlassian.net"
+    required: true
   jiraUsername:
     description: "The username to authenticate with"
+    required: true
   jiraPassword:
     description: "The password for the provided username"
+    required: true
   project:
     description: "The project key to create a new issue in"
+    required: true
   assignee:
     description: "The default assignee for any created issues"
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

@@ -29,7 +29,7 @@ Toolkit.run(async tools => {
     }
 
     tools.exit.success('We did it!')
-  } catch(e) {
+  } catch (e) {
     console.log(e);
     tools.exit.failure(e.message)
   }
@@ -38,7 +38,7 @@ Toolkit.run(async tools => {
 async function addJiraLabel(jira, tools) {
   const payload = tools.context.payload;
   const label = payload.label.name;
-  const request = { "update": { "labels": [ {"add": label } ] } };
+  const request = { "update": { "labels": [{ "add": label }] } };
   const issueNumber = await getIssueNumber(tools);
   const result = await jira.updateIssue(issueNumber, request);
   console.log(result);
@@ -47,7 +47,7 @@ async function addJiraLabel(jira, tools) {
 async function removeJiraLabel(jira, tools) {
   const payload = tools.context.payload;
   const label = payload.label.name;
-  const request = { "update": { "labels": [ {"remove": label } ] } };
+  const request = { "update": { "labels": [{ "remove": label }] } };
   const issueNumber = await getIssueNumber(tools);
   const result = await jira.updateIssue(issueNumber, request);
   console.log(result);
@@ -97,7 +97,7 @@ async function addJiraTicket(jira, tools) {
   const body = `${payload.issue.body}\n\nRaised by: ${payload.issue.user.html_url}\n\n${payload.issue.html_url}`;
 
   const project = core.getInput('project', { required: true });
-  const assignee = core.getInput('assignee', { required: true });
+  const assignee = core.getInput('assignee', { required: false });
 
   tools.log.pending("Creating Jira ticket with the following parameters");
   tools.log.info(`Title: ${title}`);
@@ -107,19 +107,25 @@ async function addJiraTicket(jira, tools) {
 
   let request = {
     fields: {
-      assignee: {
-        name: assignee,
+      issuetype: {
+        name: "Task"
       },
       project: {
         key: project
       },
       summary: title,
-      description: body,
-      issuetype: {
-        name: "Task"
-      }
+      description: body
     }
   };
+
+  if (assignee && assignee.length > 0) {
+    request = {
+      ...request,
+      assignee: {
+        name: assignee,
+      }
+    };
+  }
 
   const result = await jira.addNewIssue(request);
   tools.log.complete("Created Jira ticket");
