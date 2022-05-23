@@ -2,6 +2,19 @@ const { Toolkit } = require('actions-toolkit');
 const core = require('@actions/core');
 var JiraApi = require('jira-client');
 
+// Replace generated makeRequestHeader with this one
+// makeRequestHeader(uri, options = {}) {
+//   return {
+//     rejectUnauthorized: this.strictSSL,
+//     method: options.method || 'GET',
+//     uri,
+//     json: true,
+//     gzip: true,
+//     ...options
+//   };
+// }
+
+
 // Run your GitHub Action!
 Toolkit.run(async tools => {
   try {
@@ -57,7 +70,7 @@ async function getIssueNumber(tools) {
   const issueComment = (await tools.github.issues.listComments({
     owner: tools.context.repo.owner,
     repo: tools.context.repo.repo,
-    issue_number: tools.context.issue_number,
+    issue_number: tools.context.issue.issue_number,
     per_page: 1
   })).data[0].body;
 

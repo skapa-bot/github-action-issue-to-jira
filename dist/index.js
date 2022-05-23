@@ -40276,6 +40276,7 @@ class JiraApi {
       method: options.method || 'GET',
       uri,
       json: true,
+      gzip: true,
       ...options
     };
   }
@@ -72337,6 +72338,19 @@ const { Toolkit } = __nccwpck_require__(9090);
 const core = __nccwpck_require__(5127);
 var JiraApi = __nccwpck_require__(4085);
 
+// Replace generated makeRequestHeader with this one
+// makeRequestHeader(uri, options = {}) {
+//   return {
+//     rejectUnauthorized: this.strictSSL,
+//     method: options.method || 'GET',
+//     uri,
+//     json: true,
+//     gzip: true,
+//     ...options
+//   };
+// }
+
+
 // Run your GitHub Action!
 Toolkit.run(async tools => {
   try {
@@ -72392,7 +72406,7 @@ async function getIssueNumber(tools) {
   const issueComment = (await tools.github.issues.listComments({
     owner: tools.context.repo.owner,
     repo: tools.context.repo.repo,
-    issue_number: tools.context.issue_number,
+    issue_number: tools.context.issue.issue_number,
     per_page: 1
   })).data[0].body;
 
