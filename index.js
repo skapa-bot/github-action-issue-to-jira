@@ -57,7 +57,7 @@ async function getIssueNumber(tools) {
   const issueComment = (await tools.github.issues.listComments({
     owner: tools.context.repo.owner,
     repo: tools.context.repo.repo,
-    issue_number: tools.context.issue.number,
+    issue_number: tools.context.issue_number,
     per_page: 1
   })).data[0].body;
 
@@ -130,14 +130,25 @@ async function addJiraTicket(jira, tools) {
   const result = await jira.addNewIssue(request);
   tools.log.complete("Created Jira ticket");
 
-  console.log(result);
-  const jiraIssue = (result.key) ? result.key : result["key"];
+  const jiraIssue = result.key;
+
+  if (!jiraIssue || jiraIssue.length === 0) {
+    try {
+      console.log("Jira Response (stringify)", JSON.stringify(result));
+  
+      let jsonResult = JSON.parse(result);
+      console.log("JSON parsed!", jsonResult);
+      const jiraIssue = jsonResult.key;
+    } catch (ex) {
+      console.log("JSON not parsed!", ex)
+    }
+  }
 
   tools.log.pending("Creating Issue comment with Jira Issue number");
   const comment = await tools.github.issues.createComment({
     owner: tools.context.repo.owner,
     repo: tools.context.repo.repo,
-    issue_number: tools.context.issue.number,
+    issue_number: tools.context.issue.issue_number,
     body: `Issue: ${jiraIssue}`
   });
   tools.log.complete("Creating Issue comment with Jira Issue number");
