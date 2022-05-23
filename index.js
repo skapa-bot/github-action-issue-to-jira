@@ -130,7 +130,9 @@ async function addJiraTicket(jira, tools) {
   const result = await jira.addNewIssue(request);
   tools.log.complete("Created Jira ticket");
 
-  const jiraIssue = result.key;
+  console.log(result);
+  const jiraIssue = (result.key) ? result.key : result["key"];
+
   tools.log.pending("Creating Issue comment with Jira Issue number");
   const comment = await tools.github.issues.createComment({
     owner: tools.context.repo.owner,
